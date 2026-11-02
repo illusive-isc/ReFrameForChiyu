@@ -11,6 +11,12 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
         AvatarNames = new[] { "ChiyuAvatar" }
     )]
     [ReFrameTheme("Packages/jp.illusive-isc.reframe-chiyu/Editor/UI/ChiyuTheme.uss")]
+    // 宣伝: ちゆ専用の商品を先頭に (その下に作者ショップ共通の商品が ReFrameIllusoryOverride から並ぶ)。
+    [ReFramePromoItem(
+        "【ちゆ専用】ちゆ差分プレハブセット｜7つの性格の表情・体型・尻尾【MA・FaceEmo対応】",
+        "https://illusive-isc.booth.pm/items/9087398",
+        ImagePath = "Packages/jp.illusive-isc.reframe-chiyu/Editor/UI/Promo/ChiyuDiffPrefabSet.jpg"
+    )]
     // Quest: 法線マップからの陰の焼き込みは切る (ちゆの髪・服の法線マップは凹凸が強く、髪に黒い筋・カーディガンに黒い縞が出た)。
     // 明るさは全体 0.83 で肌・服が PC と同じ (白い方向光 1 + 環境光 0.2 で lilToon と比べて 0.96〜1.05)。
     // 髪とソックスだけ Quest の方が 8〜11% 明るく黄色寄り (PC はマットキャップ・リムで銀がかる) なので個別に下げて青へ寄せる。
@@ -51,7 +57,7 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
     [ReFrameGroupLabel("JumpAndDash", "ジャンプ・ダッシュ")]
     [ReFrameGroupLabel("Locomotion", "ロコモーション")]
     [ReFrameGroupLabel("VRCEmote", "エモート")]
-    public class ChiyuReFrame : ReFrameDeleteComponent
+    public class ChiyuReFrame : ReFrameIllusoryOverride
     {
         // ---- 服 (Chiyu_Cloth の MA メニュー。1 = 着たまま固定してメニューだけ消す、0 = 脱いで固定) ----
 
