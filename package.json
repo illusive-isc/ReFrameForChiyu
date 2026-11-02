@@ -1,0 +1,30 @@
+{
+	"name": "jp.illusive-isc.reframe-chiyu",
+	"version": "0.1.0",
+	"displayName": "ReFrame for Chiyu",
+	"description": "ちゆ (plium) 用のパッケージです。消す対象 (衣装・髪・小物・ギミック類) 及び Quest 対応用の差分設定。",
+	"unity": "2022.3",
+	"author": {
+		"name": "illusive_isc",
+		"url": "https://illusive_isc.jp"
+	},
+	"vpmDependencies": {
+		"jp.illusive-isc.reframe-core": ">=0.7.0",
+		"nadena.dev.ndmf": ">=1.6.0",
+		"nadena.dev.modular-avatar": ">=1.13.0",
+		"com.vrchat.avatars": ">=3.7.0",
+		"com.anatawa12.avatar-optimizer": ">=1.8.0",
+		"jp.lilxyzw.liltoon": ">=1.7.0"
+	},
+	"license": "MIT",
+	"keywords": [
+		"VRChat",
+		"Avatar",
+		"NDMF",
+		"Quest",
+		"Optimization",
+		"Chiyu",
+		"plium"
+	],
+	"repo": "https://reframe.illusive-isc.jp/vpm/index.json"
+}

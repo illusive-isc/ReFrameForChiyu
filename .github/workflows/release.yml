@@ -1,0 +1,119 @@
+name: Build Release
+
+on:
+  workflow_dispatch:
+  # package.json の version と同じ名前のタグを push しても動く (例: git push origin 0.0.1)
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+*"
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      packagePath: .
+    steps:
+
+      # Checkout Local Repository
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # package.json から名前とバージョンを読む (jq は runner に最初から入っている)
+      - name: Read package.json
+        id: pkg
+        run: |
+          name=$(jq -r .name "${{ env.packagePath }}/package.json")
+          version=$(jq -r .version "${{ env.packagePath }}/package.json")
+          if [ -z "$name" ] || [ "$name" = "null" ]; then echo "::error::package.json に name がありません"; exit 1; fi
+          if [ -z "$version" ] || [ "$version" = "null" ]; then echo "::error::package.json に version がありません"; exit 1; fi
+          echo "name=$name" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Set Environment Variables
+        run: |
+          echo "zipFile=${{ steps.pkg.outputs.name }}-${{ steps.pkg.outputs.version }}.zip" >> $GITHUB_ENV
+          echo "unityPackage=${{ steps.pkg.outputs.name }}-${{ steps.pkg.outputs.version }}.unitypackage" >> $GITHUB_ENV
+          echo "version=${{ steps.pkg.outputs.version }}" >> $GITHUB_ENV
+          echo "packageName=${{ steps.pkg.outputs.name }}" >> $GITHUB_ENV
+
+      # package.json の中身を配布前に確認する (バージョンの形式・配布 URL の有無)
+      - name: Validate package.json
+        run: |
+          node -e '
+            const p = require("./${{ env.packagePath }}/package.json");
+            if (!/^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/.test(p.version)) { console.error("version が semver ではありません: " + p.version); process.exit(1); }
+            if (!p.vpmDistributionUrl && !p.repo) { console.warn("::warning::vpmDistributionUrl / repo が無いので、ReFrame の更新通知は動きません。"); }
+            for (const k of ["name", "displayName", "unity", "license", "vpmDependencies"]) if (!p[k]) { console.error(k + " がありません"); process.exit(1); }
+            console.log(p.name + " " + p.version + " OK");
+          '
+
+      # Zip the Package for release
+      - name: Create Package Zip
+        working-directory: "${{ env.packagePath }}"
+        run: zip -r "${{ github.workspace }}/${{ env.zipFile }}" . -x '.*' '*/.*'
+
+      # VPM の一覧 (zipSHA256) に貼るためのハッシュ
+      - name: Compute zip SHA256
+        run: |
+          sha256sum "${{ env.zipFile }}" | cut -d ' ' -f 1 > "${{ env.zipFile }}.sha256"
+          echo "zipSHA256=$(cat "${{ env.zipFile }}.sha256")" >> $GITHUB_ENV
+          echo "zip SHA256: $(cat "${{ env.zipFile }}.sha256")"
+
+      # Build a list of .meta files for future use
+      - name: Track Package Meta Files
+        run: find "${{ env.packagePath }}/" -name \*.meta >> metaList
+
+      # タグ push で来たときは、タグ名と package.json の version が一致しているか確認する
+      - name: Check tag matches version
+        if: github.event_name == 'push'
+        run: test "${GITHUB_REF#refs/tags/}" = "${{ env.version }}" || (echo "tag と package.json の version が違います" && exit 1)
+
+      # Make a release tag of the version from the package.json file (手動実行のときだけ)
+      - name: Create Tag
+        id: tag_version
+        if: github.event_name == 'workflow_dispatch'
+        uses: rickstaa/action-create-tag@a1c7777fcb2fee4f19b0f283ba888afa11678b72 # v1.7.2
+        with:
+          tag: "${{ env.version }}"
+          beta: ${{ github.ref == 'refs/heads/dev' }}
+
+      # Publish the Release to GitHub (zip / package.json / SHA256 を添付)
+      - name: Make Release
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
+        with:
+          files: |
+            ${{ env.zipFile }}
+            ${{ env.zipFile }}.sha256
+            ${{ env.packagePath }}/package.json
+          tag_name: ${{ env.version }}
+          prerelease: ${{ github.ref == 'refs/heads/dev' }}
+          body: |
+            ${{ env.packageName }} ${{ env.version }}
+
+            zip SHA256: `${{ env.zipSHA256 }}`
+
+      # 公開サイト (illusive-isc/ReFrame) に再ビルドを頼み、VPM の一覧に今回の版を載せる。
+      # Secrets の SITE_DISPATCH_TOKEN は ReFrame リポジトリへの contents:write を持つ Fine-grained PAT。
+      # サイト側に定期実行の保険は無く、この通知だけが一覧を更新する唯一の経路。
+      # 失敗したら赤くして気づけるようにする (Release 自体は作成済みなので配布物は失われない)。
+      - name: Notify site
+        env:
+          TOKEN: ${{ secrets.SITE_DISPATCH_TOKEN }}
+          SITE_REPO: illusive-isc/ReFrame
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::error::SITE_DISPATCH_TOKEN が未登録です。Release は作成済みですが、VPM の一覧は更新されていません。"
+            echo "$SITE_REPO の Actions から Deploy site を手動実行するか、Secrets にトークンを登録してください。"
+            exit 1
+          fi
+          payload='{"event_type":"package-released","client_payload":{"repo":"${{ github.repository }}","version":"${{ env.version }}"}}'
+          code=$(curl -sS -o dispatch.log -w '%{http_code}' -X POST -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.github+json" -d "$payload" "https://api.github.com/repos/$SITE_REPO/dispatches")
+          if [ "$code" != "204" ]; then
+            echo "::error::サイトへの通知に失敗しました (HTTP $code)"
+            cat dispatch.log
+            exit 1
+          fi
+          echo "サイトに再ビルドを依頼しました。"
