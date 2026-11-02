@@ -131,6 +131,14 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
         [ReFrameLabel("もぐもぐ")]
         public ReFrameDeleteEntry mogumogu = new() { Enabled = false, Value = 0f };
 
+        // FaceEmo などで表情を作り直すとき用。Gesture にも同じ名前の層 (手の形) があるので FX の層だけ消す。
+        [ReFrameMenuGroup("Gimmick", "Face")]
+        [ReFrameLabel("表情プリセット (FaceEmo 用)")]
+        [ReFrameValueLocked(0f)]
+        [ReFrameDeleteLayer("Left_Hand", FxOnly = true)]
+        [ReFrameDeleteLayer("Right_Hand", FxOnly = true)]
+        public ReFrameDeleteEntry faceGesturePreset = new() { Enabled = false, Value = 0f };
+
         // 0 (胸小さく 100) / 0.5 (どちらも 0) / 1 (胸大きく 100) の 1D BlendTree。
         [ReFrameDelete("Breast_Size", ReFrameParameterType.Float)]
         [ReFrameApplyToAvatar]
