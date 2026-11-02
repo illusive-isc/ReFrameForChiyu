@@ -9,7 +9,7 @@
 		"url": "https://illusive_isc.jp"
 	},
 	"vpmDependencies": {
-		"jp.illusive-isc.reframe-core": ">=0.7.0",
+		"jp.illusive-isc.reframe-core": ">=0.8.0",
 		"nadena.dev.ndmf": ">=1.6.0",
 		"nadena.dev.modular-avatar": ">=1.13.0",
 		"com.vrchat.avatars": ">=3.7.0",

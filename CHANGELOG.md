@@ -8,4 +8,4 @@
 - ロコモーションのポーズは番号を選んで焼き込めます。
 - Quest 簡易対応版の初期設定 (揺れ物 8 本・色の調整・頬染めの重ね描きを切る)。
 - 宣伝欄。
-- ReFrameCore の新しい機能 ([ReFrameDeleteLayer(FxOnly)]・[ReFrameQuestKeepPhysBones]・ReFrameIllusoryOverride) が要ります。ReFrameCore 0.7.0 より後の版と組み合わせてください。
+- ReFrameCore の新しい機能 ([ReFrameDeleteLayer(FxOnly)]・[ReFrameQuestKeepPhysBones]・ReFrameIllusoryOverride) が要ります。ReFrameCore 0.8.0 以上が必要です。
