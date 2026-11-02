@@ -1,6 +1,6 @@
 {
 	"name": "jp.illusive-isc.reframe-chiyu",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"displayName": "ReFrame for Chiyu",
 	"description": "ちゆ (plium) 用のパッケージです。消す対象 (衣装・髪・小物・ギミック類) 及び Quest 対応用の差分設定。",
 	"unity": "2022.3",

@@ -76,7 +76,9 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
         [ReFrameDelete("Chiyu_Socks", ReFrameParameterType.Bool)]
         [ReFrameLabel("ソックス")]
         // 着たまま固定 (1) なら、Chiyu_Shrink1 (ソックスの下で潰して隠す、面積 0.1 倍) で動く体の三角形を切る。
-        [ReFrameCutByBlendShape("body_b", "Chiyu_Shrink1")]
+        // Shrink1 は履き口より上の見えている太もも (高さ 0.534〜0.569m) も 1〜2mm 動かすので、既定の 1mm だと
+        // そこまで切れて太ももとソックスの間にすき間が開く。ソックスの中は 10mm 以上動くので、間の 5mm で分ける。
+        [ReFrameCutByBlendShape("body_b", "Chiyu_Shrink1", Tolerance = 0.005f)]
         public ReFrameDeleteEntry socks = new() { Enabled = false, Value = 1f };
 
         [ReFrameDelete("Chiyu_Loafers", ReFrameParameterType.Bool)]
