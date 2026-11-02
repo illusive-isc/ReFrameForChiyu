@@ -242,45 +242,48 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
 
         // ---- ロコモーション (公式 plium_Loco) ----
         // メニューのボタンが Change_* を書き、SetView_* 層が *_M へ写してから 0 に戻す。Locomotion の BlendTree は *_M で姿勢を選ぶ。
-        // 消すときは通常の姿勢 (0) に固定して、写す層ごと外す。
+        // 消すときは選んだポーズ (かぐやと同じく焼き込み) に Change_* と *_M の両方を固定して、写す層ごと外す。
+        // BlendTree のしきい値は 0.01 から始まるので 0 は 1 番と同じ。公式の初期値も 1 番 (0.01)。
+        // Change_* を読むのは SetView_* だけなので、*_M と同じ値で固定してよい。
 
         [ReFrameDelete("Change_Standing", ReFrameParameterType.Float)]
         [ReFrameDelete("Change_Standing_M", ReFrameParameterType.Float)]
-        [ReFrameValueLocked(0f)]
+        [ReFrameValueChoices("1=0.01", "2=0.02", "3=0.03", "4=0.04", "5=0.05", "6=0.06", "7=0.07", "8=0.08")]
         [ReFrameCollapseBlendTree]
         [ReFrameDeleteLayer("SetView_Standing")]
         [ReFrameLabel("立ちポーズ")]
         [ReFrameMenuGroup("Locomotion")]
         [ReFrameRowOrder(0)]
-        public ReFrameDeleteEntry standingPoses = new() { Enabled = false, Value = 0f };
+        public ReFrameDeleteEntry standingPoses = new() { Enabled = false, Value = 0.01f };
 
         [ReFrameDelete("Change_Crouching", ReFrameParameterType.Float)]
         [ReFrameDelete("Change_Crouching_M", ReFrameParameterType.Float)]
-        [ReFrameValueLocked(0f)]
+        [ReFrameValueChoices("1=0.01", "2=0.02", "3=0.03", "4=0.04", "5=0.05", "6=0.06", "7=0.07", "8=0.08")]
         [ReFrameCollapseBlendTree]
         [ReFrameDeleteLayer("SetView_Crouching")]
         [ReFrameLabel("しゃがみポーズ")]
         [ReFrameMenuGroup("Locomotion")]
         [ReFrameRowOrder(1)]
-        public ReFrameDeleteEntry crouchingPoses = new() { Enabled = false, Value = 0f };
+        public ReFrameDeleteEntry crouchingPoses = new() { Enabled = false, Value = 0.01f };
 
         // ポーズを消すと Prone のサブメニューには Mirror (全姿勢の左右反転) だけが残るので、Mirror を Locomotion へ移す。
         [ReFrameMenuRemove("Locomotion/Prone", Keep = new[] { "Mirror" })]
         [ReFrameDelete("Change_Prone", ReFrameParameterType.Float)]
         [ReFrameDelete("Change_Prone_M", ReFrameParameterType.Float)]
-        [ReFrameValueLocked(0f)]
+        [ReFrameValueChoices("1=0.01", "2=0.02", "3=0.03", "4=0.04", "5=0.05", "6=0.06", "7=0.07")]
         [ReFrameCollapseBlendTree]
         [ReFrameDeleteLayer("SetView_Prone")]
         [ReFrameLabel("伏せポーズ")]
         [ReFrameMenuGroup("Locomotion")]
         [ReFrameRowOrder(2)]
-        public ReFrameDeleteEntry pronePoses = new() { Enabled = false, Value = 0f };
+        public ReFrameDeleteEntry pronePoses = new() { Enabled = false, Value = 0.01f };
 
         [ReFrameDelete("Floating", ReFrameParameterType.Float)]
         [ReFrameDelete("Floating_M", ReFrameParameterType.Float)]
         [ReFrameValueLocked(0f)]
         [ReFrameCollapseBlendTree]
         [ReFrameDeleteLayer("SetView_Floating")]
+        // 浮遊は姿勢ではなくモード (Floating_M > 0 の間ずっと浮く、Reset = -1 で戻る) なので、焼き込まずに消すだけ。
         [ReFrameLabel("浮遊ポーズ")]
         [ReFrameMenuGroup("Locomotion")]
         [ReFrameRowOrder(3)]
