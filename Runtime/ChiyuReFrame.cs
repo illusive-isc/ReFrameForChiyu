@@ -11,6 +11,23 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
         AvatarNames = new[] { "ChiyuAvatar" }
     )]
     [ReFrameTheme("Packages/jp.illusive-isc.reframe-chiyu/Editor/UI/ChiyuTheme.uss")]
+    // Quest: 法線マップからの陰の焼き込みは切る (ちゆの髪・服の法線マップは凹凸が強く、髪に黒い筋・カーディガンに黒い縞が出た)。
+    // 明るさは全体 0.83 で肌・服が PC と同じ (白い方向光 1 + 環境光 0.2 で lilToon と比べて 0.96〜1.05)。
+    // 髪とソックスだけ Quest の方が 8〜11% 明るく黄色寄り (PC はマットキャップ・リムで銀がかる) なので個別に下げて青へ寄せる。
+    [ReFrameQuestBake(Brightness = 0.83f, ShadowFromNormalMap = false, MaxTextureSize = 1024)]
+    [ReFrameQuestBrightness("FrontHair", Brightness = 0.68f)]
+    [ReFrameQuestBrightness("BackHair", Brightness = 0.68f)]
+    [ReFrameQuestBrightness("HairBase", Brightness = 0.68f)]
+    [ReFrameQuestTint("FrontHair", R = 0.99f, G = 1f, B = 1.05f)]
+    [ReFrameQuestTint("BackHair", R = 0.99f, G = 1f, B = 1.05f)]
+    [ReFrameQuestTint("HairBase", R = 0.99f, G = 1f, B = 1.05f)]
+    [ReFrameQuestBrightness("Chiyu_Cloth/Socks", Brightness = 0.66f)]
+    [ReFrameQuestTint("Chiyu_Cloth/Socks", R = 1f, G = 1f, B = 1.06f)]
+    // 顔の重ね描きの枠 (Face_Transparent、頬染め・コミカル表現など) は Quest では不透明に描かれ、頬染めが顔の真ん中の帯になる → 透明な三角形を切る。
+    [ReFrameQuestCutTransparent("Body", 2)]
+    // Quest の揺れ物は 8 本・ボーン 64 まで。前髪・ツインテール・尻尾・胸・耳の 8 本でボーン 61・当たり判定 0 に収まる
+    // (後ろ髪 61・スカート 66 は 1 本で上限近いので止める)。Quest 簡易対応版を作ったときの初期値。
+    [ReFrameQuestKeepPhysBones("FrontHair_Root", "Twintail_L", "Twintail_R", "Tail", "Breast_L", "Breast_R", "Ear_L", "Ear_R")]
     [ReFramePhysBoneGroup("前髪", "FrontHair_Root")]
     [ReFramePhysBoneGroup("横髪", "SideHair")]
     [ReFramePhysBoneGroup("ツインテール", "Twintail")]
