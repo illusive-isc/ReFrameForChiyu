@@ -206,6 +206,7 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
         [ReFrameValueLocked(0f)]
         [ReFrameDeleteObject("JumpAndDash")]
         [ReFrameLabel("ジャンプ・ダッシュ")]
+        [ReFrameMenuGroup("Gimmick")]
         public ReFrameDeleteEntry jumpDash = new() { Enabled = false, Value = 0f };
 
         // ---- AFK ----
@@ -213,6 +214,7 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
         [ReFrameMenuGroup("Locomotion")]
         [ReFrameDelete("plium_AFK", ReFrameParameterType.Bool)]
         [ReFrameLabel("AFK (メニュー)")]
+        [ReFrameRowOrder(8)]
         public ReFrameDeleteEntry afk = new() { Enabled = false, Value = 0f };
 
         // VRChat 本体の AFK でも出るぬいぐるみと演出。
@@ -220,11 +222,14 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
         [ReFrameValueLocked(0f)]
         [ReFrameDeleteObject("POTECHI_AFK")]
         [ReFrameLabel("AFK のぬいぐるみ")]
+        [ReFrameRowOrder(9)]
         public ReFrameDeleteEntry afkPotechi = new() { Enabled = false, Value = 0f };
 
         [ReFrameDelete("VRCEmote", ReFrameParameterType.Int)]
         [ReFrameValueLocked(0f)]
         [ReFrameLabel("エモート (VRCEmote)")]
+        [ReFrameMenuGroup("Locomotion")]
+        [ReFrameRowOrder(10)]
         public ReFrameDeleteEntry vrcEmote = new() { Enabled = false, Value = 0f };
 
         // ---- ロコモーション (公式 plium_Loco) ----
@@ -237,6 +242,8 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
         [ReFrameCollapseBlendTree]
         [ReFrameDeleteLayer("SetView_Standing")]
         [ReFrameLabel("立ちポーズ")]
+        [ReFrameMenuGroup("Locomotion")]
+        [ReFrameRowOrder(0)]
         public ReFrameDeleteEntry standingPoses = new() { Enabled = false, Value = 0f };
 
         [ReFrameDelete("Change_Crouching", ReFrameParameterType.Float)]
@@ -245,6 +252,8 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
         [ReFrameCollapseBlendTree]
         [ReFrameDeleteLayer("SetView_Crouching")]
         [ReFrameLabel("しゃがみポーズ")]
+        [ReFrameMenuGroup("Locomotion")]
+        [ReFrameRowOrder(1)]
         public ReFrameDeleteEntry crouchingPoses = new() { Enabled = false, Value = 0f };
 
         // ポーズを消すと Prone のサブメニューには Mirror (全姿勢の左右反転) だけが残るので、Mirror を Locomotion へ移す。
@@ -255,6 +264,8 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
         [ReFrameCollapseBlendTree]
         [ReFrameDeleteLayer("SetView_Prone")]
         [ReFrameLabel("伏せポーズ")]
+        [ReFrameMenuGroup("Locomotion")]
+        [ReFrameRowOrder(2)]
         public ReFrameDeleteEntry pronePoses = new() { Enabled = false, Value = 0f };
 
         [ReFrameDelete("Floating", ReFrameParameterType.Float)]
@@ -263,23 +274,33 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
         [ReFrameCollapseBlendTree]
         [ReFrameDeleteLayer("SetView_Floating")]
         [ReFrameLabel("浮遊ポーズ")]
+        [ReFrameMenuGroup("Locomotion")]
+        [ReFrameRowOrder(3)]
         public ReFrameDeleteEntry floatingPoses = new() { Enabled = false, Value = 0f };
 
         [ReFrameDelete("Change_Mirror", ReFrameParameterType.Bool)]
         [ReFrameLabel("ポーズの左右反転")]
+        [ReFrameMenuGroup("Locomotion")]
+        [ReFrameRowOrder(4)]
         public ReFrameDeleteEntry poseMirror = new() { Enabled = false, Value = 0f };
 
         // 1 = ジャンプ・落下のモーションを出さない (既定)。
         [ReFrameDelete("Jump_Cancel", ReFrameParameterType.Bool)]
         [ReFrameLabel("ジャンプモーション OFF")]
+        [ReFrameMenuGroup("Locomotion")]
+        [ReFrameRowOrder(5)]
         public ReFrameDeleteEntry jumpCancel = new() { Enabled = false, Value = 1f };
 
         [ReFrameDelete("Move_Animation_Off", ReFrameParameterType.Bool)]
         [ReFrameLabel("移動モーション OFF (Hover)")]
+        [ReFrameMenuGroup("Locomotion")]
+        [ReFrameRowOrder(6)]
         public ReFrameDeleteEntry moveAnimationOff = new() { Enabled = false, Value = 0f };
 
         [ReFrameDelete("Leg_Fixed", ReFrameParameterType.Bool)]
         [ReFrameLabel("足固定")]
+        [ReFrameMenuGroup("Locomotion")]
+        [ReFrameRowOrder(7)]
         public ReFrameDeleteEntry legFixed = new() { Enabled = false, Value = 0f };
 
         // 書き手の無いパラメーター (メニュー・EP・Driver・Contact のどれにも無く、常に既定値) の分岐を畳む。
