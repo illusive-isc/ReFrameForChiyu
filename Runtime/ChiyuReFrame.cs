@@ -69,6 +69,8 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
         [ReFrameLabel("ワンピース")]
         // 着たまま固定 (1) なら、Chiyu_Shrink2 (ワンピースの下で潰して隠す、面積 0.38 倍) で動く体の三角形を切る。
         [ReFrameCutByBlendShape("body_b", "Chiyu_Shrink2")]
+        // ワンピースが無いとカーディガンも MA Object Toggle で隠れるので、脱いで固定 (0) なら一緒に消す (プレビューにも出る)。
+        [ReFrameDeleteObject("Chiyu_Cloth/Cardigan", 0f)]
         public ReFrameDeleteEntry onepiece = new() { Enabled = false, Value = 1f };
 
         [ReFrameDelete("Chiyu_Socks", ReFrameParameterType.Bool)]
