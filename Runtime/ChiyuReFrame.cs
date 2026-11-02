@@ -44,10 +44,14 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
 
         [ReFrameDelete("Chiyu_Onepiece", ReFrameParameterType.Bool)]
         [ReFrameLabel("ワンピース")]
+        // 着たまま固定 (1) なら、Chiyu_Shrink2 (ワンピースの下で潰して隠す、面積 0.38 倍) で動く体の三角形を切る。
+        [ReFrameCutByBlendShape("body_b", "Chiyu_Shrink2")]
         public ReFrameDeleteEntry onepiece = new() { Enabled = false, Value = 1f };
 
         [ReFrameDelete("Chiyu_Socks", ReFrameParameterType.Bool)]
         [ReFrameLabel("ソックス")]
+        // 着たまま固定 (1) なら、Chiyu_Shrink1 (ソックスの下で潰して隠す、面積 0.1 倍) で動く体の三角形を切る。
+        [ReFrameCutByBlendShape("body_b", "Chiyu_Shrink1")]
         public ReFrameDeleteEntry socks = new() { Enabled = false, Value = 1f };
 
         [ReFrameDelete("Chiyu_Loafers", ReFrameParameterType.Bool)]
@@ -102,6 +106,26 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
         [ReFrameLabel("前髪の形")]
         public ReFrameDeleteEntry frontType = new() { Enabled = false, Value = 0f };
 
+        // 髪型を差し替えるとき用 (かぐやと同じ)。髪のメッシュと、後ろ髪の回転 (Hair_Rotation の Contact と FX_Control の枝) を消す。
+        [ReFrameMenuGroup("Closet", "Hair")]
+        [ReFrameLabel("髪 (髪型を差し替えるとき)")]
+        [ReFrameValueLocked(0f)]
+        [ReFrameDeleteObject("BackHair")]
+        [ReFrameDeleteObject("FrontHair")]
+        [ReFrameDeleteObject("HairBase")]
+        [ReFrameDeleteObject("Chiyu Contact/Hair Rotation Receiver")]
+        [ReFrameDeleteObject("Chiyu Contact/Hair Rotation Sender")]
+        [ReFrameDeleteRelatedBlendTree("Hair_Rotation")]
+        // 髪の骨と揺れ物。髪のメッシュ以外は使っていないが、Hair Menu の層 (耳・尻尾の切り替えと同居) が動かし続けるので掃除では消えない。
+        [ReFrameDeleteObject("Armature/Hips/Spine/Chest/Neck/Head/FrontHair_Root")]
+        [ReFrameDeleteObject("Armature/Hips/Spine/Chest/Neck/Head/BackHair_Root")]
+        [ReFrameDeleteObject("Armature/Hips/Spine/Chest/Neck/Head/SideHair_Root")]
+        [ReFrameDeleteObject("Armature/Hips/Spine/Chest/Neck/Head/SideHair_PB")]
+        [ReFrameDeleteObject("Armature/Hips/Spine/Chest/Neck/Head/SideHair_PB2")]
+        [ReFrameDeleteObject("Armature/Hips/Spine/Chest/Neck/Head/Twintail_L")]
+        [ReFrameDeleteObject("Armature/Hips/Spine/Chest/Neck/Head/Twintail_R")]
+        public ReFrameDeleteEntry hair = new() { Enabled = false, Value = 0f };
+
         // ---- 表情 (公式 FX) ----
 
         [ReFrameDelete("Blink_Off", ReFrameParameterType.Bool)]
@@ -144,6 +168,20 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
         [ReFrameApplyToAvatar]
         [ReFrameLabel("胸の大きさ")]
         public ReFrameDeleteEntry breastSize = new() { Enabled = false, Value = 0.5f };
+
+        [ReFrameMenuGroup("Gimmick")]
+        [ReFrameApplyToAvatar]
+        [ReFrameLabel("足: ヒールオフ")]
+        [ReFrameBlendShape("body_b", "heel_OFF_ヒールオフ_R")]
+        [ReFrameBlendShape("body_b", "heel_OFF_ヒールオフ_L")]
+        public ReFrameDeleteEntry heelOff = new() { Enabled = false, Value = 0f };
+
+        [ReFrameMenuGroup("Gimmick")]
+        [ReFrameApplyToAvatar]
+        [ReFrameLabel("足: ハイヒール")]
+        [ReFrameBlendShape("body_b", "highheel_ハイヒール_R")]
+        [ReFrameBlendShape("body_b", "highheel_ハイヒール_L")]
+        public ReFrameDeleteEntry highHeel = new() { Enabled = false, Value = 0f };
 
         // ---- 小物 (Props。それぞれ MA の部品なので、オブジェクトごと消す) ----
 
@@ -197,6 +235,9 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
         [ReFrameValueLocked(0f)]
         [ReFrameDeleteObject("PortableFan")]
         [ReFrameLabel("ハンディファン")]
+        // 風は最大 毎秒 10 × 寿命 4 秒 = 40 粒 (FX が rateOverTime を 0 / 2 / 10 に切り替える)。
+        [ReFrameSetMaxParticles("PortableFan/Armature/Hips/Spine/Chest/sholder_R/Upperarm_R/Lowerarm_R/Right Hand/PortableFan/Particle System", 50, Always = true)]
+        [ReFrameQuestParticleMaterial("PortableFan", Recursive = true)]
         public ReFrameDeleteEntry portableFan = new() { Enabled = false, Value = 0f };
 
         [ReFrameDelete("POTECHI_nui", ReFrameParameterType.Bool)]
@@ -231,6 +272,7 @@ namespace jp.illusive_isc.ReFrame.Plium.Chiyu
         [ReFrameDeleteObject("POTECHI_AFK")]
         [ReFrameLabel("AFK のぬいぐるみ")]
         [ReFrameRowOrder(9)]
+        [ReFrameQuestParticleMaterial("POTECHI_AFK/AFK Particle", Recursive = true)]
         public ReFrameDeleteEntry afkPotechi = new() { Enabled = false, Value = 0f };
 
         [ReFrameDelete("VRCEmote", ReFrameParameterType.Int)]
